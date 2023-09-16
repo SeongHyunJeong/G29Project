@@ -15,11 +15,14 @@ public class CarController : MonoBehaviour
     private float wheelBase; //앞 뒤 바퀴 사이의 거리(m단위)
     private float rearTrack; //좌 우 바튀 사이의 거리(m단위)
     public float turnRadius; //회저 반지럼(m단위)
+
+    public bool isBreak;
     // Start is called before the first frame update
     void Start()
     {
         Init();
-        breakPower = 200f;
+        breakPower = 0;
+        isBreak = false;
     }
 
     private void FixedUpdate()
@@ -30,14 +33,27 @@ public class CarController : MonoBehaviour
             // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
             wheelColliders[i].motorTorque = Input.GetAxis("Vertical") * power;
 
-            if (Input.GetKey(KeyCode.Space))
-            {
-                foreach (WheelCollider wheel in wheelColliders)
-                {
-                    // 브레이크 토크 적용(g29 값만 받아오면 됨)
-                    //wheel.brakeTorque = 3 * breakPower;
-                }
-            }
+           
+
+        }
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            isBreak = true;
+            //breakPower = 200f;
+        }
+        else 
+        {
+            isBreak = false;
+            //breakPower = 0;
+        }
+        
+        foreach (WheelCollider wheel in wheelColliders)
+        {
+            if (isBreak) breakPower = 200f;
+            else breakPower = 0;
+            //브레이크 토크 적용(g29 값만 받아오면 됨)
+            wheel.brakeTorque = 3 * breakPower;
         }
 
         SteerVehicle(); //애커만 조향
