@@ -57,14 +57,15 @@ public class G29CarController : MonoBehaviour
         {
             wheel.brakeTorque = 3 * breakPower;
         }
-
+        print(ro);
     }
 
     void InputLogitech()
     {
         LogitechGSDK.DIJOYSTATE2ENGINES rec;
         rec = LogitechGSDK.LogiGetStateUnity(0);
-        ro = rec.lX / 10000;
+        ro = rec.lX / 32767f;
+
         accPower = Mathf.Abs(rec.lY - 32767);
         intAccP = (int)accPower / 10000;
         if (rec.lY != 0)
@@ -83,9 +84,6 @@ public class G29CarController : MonoBehaviour
         {
             breakPower = Mathf.Abs(rec.lRz - 32767);
         }
-        if (ro > 0) isro = 1;
-        else if (ro < 0) isro = -1;
-        else if (ro == 0) isro = 0;
         //Button status :
 
     }
@@ -114,19 +112,19 @@ public class G29CarController : MonoBehaviour
         // Rad2Deg* Atan(wheelBase in meter / (turnRadius in meters - (rearTrack in meters / 2to get center)) *steerInput  right
         //transform.rotation = Quaternion.Euler(0, ro, 0); 
         //바퀴 오른쪽으로 회전
-        if (isro > 0)
+        if (ro > 0)
         {
             //Debug.Log("우회전");
             //Rad2Deg -> 각도를 라디안에서 degree(도)로 변환
-            wheelColliders[0].steerAngle = Mathf.Rad2Deg * Mathf.Atan(wheelBase / (turnRadius + (rearTrack / 2))) * isro;
-            wheelColliders[1].steerAngle = Mathf.Rad2Deg * Mathf.Atan(wheelBase / (turnRadius + (rearTrack / 2))) * isro;
+            wheelColliders[0].steerAngle = Mathf.Rad2Deg * Mathf.Atan(wheelBase / (turnRadius + (rearTrack / 2))) * ro;
+            wheelColliders[1].steerAngle = Mathf.Rad2Deg * Mathf.Atan(wheelBase / (turnRadius + (rearTrack / 2))) * ro;
         }
         //바퀴 왼쪽으로 회전
-        else if (isro < 0)
+        else if (ro < 0)
         {
             //Debug.Log("좌회전");
-            wheelColliders[0].steerAngle = Mathf.Rad2Deg * Mathf.Atan(wheelBase / (turnRadius + (rearTrack / 2))) * isro;
-            wheelColliders[1].steerAngle = Mathf.Rad2Deg * Mathf.Atan(wheelBase / (turnRadius + (rearTrack / 2))) * isro;
+            wheelColliders[0].steerAngle = Mathf.Rad2Deg * Mathf.Atan(wheelBase / (turnRadius + (rearTrack / 2))) * ro;
+            wheelColliders[1].steerAngle = Mathf.Rad2Deg * Mathf.Atan(wheelBase / (turnRadius + (rearTrack / 2))) * ro;
             //Debug.Log(wheelColliders[0].steerAngle);
         }
         else
