@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
 public class CarController : MonoBehaviour
 {
     private WheelCollider[] wheelColliders;
@@ -57,6 +55,7 @@ public class CarController : MonoBehaviour
     }
     void Update()
     {
+        //print(Input.GetAxis("Vertical"));
         //LogitechGSDK.DIJOYSTATE2ENGINES rec;
         //rec = LogitechGSDK.LogiGetStateUnity(0);
         //ro = rec.lX / 819;

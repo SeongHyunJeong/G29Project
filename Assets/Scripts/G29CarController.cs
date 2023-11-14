@@ -5,9 +5,11 @@ using UnityEngine;
 public class G29CarController : MonoBehaviour
 {
     private WheelCollider[] wheelColliders;
+
     private GameObject[] wheels;
     public GameObject SpeedPoint;
     public GameObject RpmPoint;
+    public GameObject HandleRotate;
     private Rigidbody rb;
     private Vector3 m_LastPosition;
     public float m_Speed;
@@ -17,10 +19,10 @@ public class G29CarController : MonoBehaviour
     public GameObject LightHead;
     public GameObject LightBreak;
     [Header("Padel")]
-    public float power; //속력
+    public float power = 0; //속력
     private float accPower; //엑셀범위
-    private int intAccP;
-    private int isAcc;
+    public int intAccP;
+    public int isAcc;
 
     public float breakPower; //브레이크 범위값
     private float wheelBase; //앞 뒤 바퀴 사이의 거리(m단위)
@@ -35,7 +37,7 @@ public class G29CarController : MonoBehaviour
     public bool right;
     public bool Night = false;
     public bool Head = false;
-
+    public float HandleRo;
     // Start is called before the first frame update
     void Start()
     {
@@ -76,8 +78,8 @@ public class G29CarController : MonoBehaviour
     {
         LogitechGSDK.DIJOYSTATE2ENGINES rec;
         rec = LogitechGSDK.LogiGetStateUnity(0);
-        ro = rec.lX / 32767f;
-
+        ro = -(rec.lX / 32767f);
+        HandleRo = rec.lX / 72.8f;
         accPower = Mathf.Abs(rec.lY - 32767);
         intAccP = (int)accPower / 10000;
         if (rec.lY != 0)
@@ -90,7 +92,6 @@ public class G29CarController : MonoBehaviour
                     else if (i == 15) isAcc = -1;
                     else if (i == 4)
                     {
-                        print("right");
                         if (right)
                         {
                             right = false;
@@ -100,7 +101,6 @@ public class G29CarController : MonoBehaviour
                     }
                     else if (i == 5)
                     {
-                        print("left");
                         if (left)
                         {
                             left = false;
@@ -118,6 +118,7 @@ public class G29CarController : MonoBehaviour
                         if (Night) Night = false;
                         else Night = true;
                     }
+                    else isAcc = 0;
                 }
             }
         }
@@ -131,22 +132,25 @@ public class G29CarController : MonoBehaviour
     {
         SpeedPoint.transform.localRotation = Quaternion.Euler(0, 0, 45 + -m_Speed);
         RpmPoint.transform.localRotation = Quaternion.Euler(0, 0, 45 + -Rpm);
+        HandleRotate.transform.localRotation = Quaternion.Euler(0, 0, HandleRo);
+        Debug.Log(wheelBase);
         Lights();
+        //Mathf.Atan(wheelBase / (turnRadius + (rearTrack / 2)))
     }
 
     void WheelPosWithCollider()
     {
+        Vector3 wheelPosition = Vector3.zero;
+        Quaternion wheelRotation = Quaternion.identity;
+
         for (int i = 0; i < 4; i++)
         {
-            Vector3 wheelPosition = Vector3.zero;
-            Quaternion wheelRotation = Quaternion.identity;
-            wheelColliders[i].GetWorldPose(out wheelPosition, out wheelRotation);
+            wheelColliders[i].GetWorldPose(out wheelPosition, out wheelRotation); //wheelCollider의  월드 포지션과 월드 로테이션 값을 받아옴
             wheels[i].transform.position = wheelPosition;
             wheels[i].transform.rotation = wheelRotation;
         }
 
-        // 여기에서 Rpm을 계산하는 부분을 수정
-        Rpm = (wheelColliders[2].rpm + wheelColliders[3].rpm) * 0.5f * 350 / 1000;
+        Rpm = wheelColliders[3].rpm;
     }
 
     // 애커만 조향
@@ -214,8 +218,8 @@ public class G29CarController : MonoBehaviour
         }
 
         turnRadius = 3;
-        wheelBase = wheelColliders[1].transform.position.z - wheelColliders[3].transform.position.z;
-        rearTrack = wheelColliders[2].transform.position.x - wheelColliders[3].transform.position.x;
+        wheelBase = wheelColliders[3].transform.position.z - wheelColliders[1].transform.position.z;
+        rearTrack = Mathf.Abs(wheelColliders[2].transform.position.x - wheelColliders[0].transform.position.x);
     }
 
     private float GetSpeed()
