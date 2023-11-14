@@ -11,7 +11,11 @@ public class G29CarController : MonoBehaviour
     private Rigidbody rb;
     private Vector3 m_LastPosition;
     public float m_Speed;
-
+    public GameObject turnLightLeft;
+    public GameObject turnLightRight;
+    public GameObject LightNight;
+    public GameObject LightHead;
+    public GameObject LightBreak;
     [Header("Padel")]
     public float power; //속력
     private float accPower; //엑셀범위
@@ -26,6 +30,12 @@ public class G29CarController : MonoBehaviour
     private float ro; //바퀴 회전값
     public float Rpm;
     public bool isBreak;
+    [Header("Lights")]
+    public bool left;
+    public bool right;
+    public bool Night = false;
+    public bool Head = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -78,8 +88,37 @@ public class G29CarController : MonoBehaviour
                 {
                     if (i == 14) isAcc = 1;
                     else if (i == 15) isAcc = -1;
+                    else if (i == 4)
+                    {
+                        print("right");
+                        if (right)
+                        {
+                            right = false;
+                            left = false;
+                        }
+                        else right = true;
+                    }
+                    else if (i == 5)
+                    {
+                        print("left");
+                        if (left)
+                        {
+                            left = false;
+                            right = false;
+                        }
+                        else left = true;
+                    }
+                    else if (i == 0)
+                    {
+                        if (Head) Head = false;
+                        else Head = true;
+                    }
+                    else if (i == 2)
+                    {
+                        if (Night) Night = false;
+                        else Night = true;
+                    }
                 }
-
             }
         }
         if (rec.lRz != 0)
@@ -87,24 +126,27 @@ public class G29CarController : MonoBehaviour
             breakPower = Mathf.Abs(rec.lRz - 32767);
         }
     }
+
     void Update()
     {
         SpeedPoint.transform.localRotation = Quaternion.Euler(0, 0, 45 + -m_Speed);
         RpmPoint.transform.localRotation = Quaternion.Euler(0, 0, 45 + -Rpm);
+        Lights();
     }
+
     void WheelPosWithCollider()
     {
-        Vector3 wheelPosition = Vector3.zero;
-        Quaternion wheelRotation = Quaternion.identity;
-
         for (int i = 0; i < 4; i++)
         {
-            wheelColliders[i].GetWorldPose(out wheelPosition, out wheelRotation); //wheelCollider의  월드 포지션과 월드 로테이션 값을 받아옴
+            Vector3 wheelPosition = Vector3.zero;
+            Quaternion wheelRotation = Quaternion.identity;
+            wheelColliders[i].GetWorldPose(out wheelPosition, out wheelRotation);
             wheels[i].transform.position = wheelPosition;
             wheels[i].transform.rotation = wheelRotation;
         }
 
-        Rpm = wheelColliders[3].rpm * 350/1000;
+        // 여기에서 Rpm을 계산하는 부분을 수정
+        Rpm = (wheelColliders[2].rpm + wheelColliders[3].rpm) * 0.5f * 350 / 1000;
     }
 
     // 애커만 조향
@@ -125,6 +167,7 @@ public class G29CarController : MonoBehaviour
             wheelColliders[0].steerAngle = 0;
             wheelColliders[1].steerAngle = 0;
         }
+
         switch (intAccP)
         {
             case 0:
@@ -150,6 +193,7 @@ public class G29CarController : MonoBehaviour
                 break;
         }
     }
+
     private void Init()
     {
         wheelColliders = new WheelCollider[4];
@@ -164,7 +208,6 @@ public class G29CarController : MonoBehaviour
         wheelColliders[1] = GameObject.Find("WheelHubFrontLeft").GetComponent<WheelCollider>();
         wheelColliders[2] = GameObject.Find("WheelHubRearRight").GetComponent<WheelCollider>();
         wheelColliders[3] = GameObject.Find("WheelHubRearLeft").GetComponent<WheelCollider>();
-
         for (int i = 0; i < 4; i++)
         {
             wheelColliders[i].transform.position = wheels[i].transform.position;
@@ -179,8 +222,15 @@ public class G29CarController : MonoBehaviour
     {
         float speed = (((transform.position - m_LastPosition).magnitude) / Time.deltaTime);
         m_LastPosition = transform.position;
-
-        
         return speed * 10;
+    }
+
+    private void Lights()
+    {
+        turnLightRight.SetActive(right);
+        turnLightLeft.SetActive(left);
+        LightBreak.SetActive(isBreak);
+        LightHead.SetActive(Head);
+        LightNight.SetActive(Night);
     }
 }
