@@ -36,18 +36,6 @@ public class LogitechSteeringWheel : MonoBehaviour
 
             LogitechGSDK.DIJOYSTATE2ENGINES rec;
             rec = LogitechGSDK.LogiGetStateUnity(0);
-            switch (rec.rgdwPOV[0])
-            {
-
-            }
-
-            for (int i = 0; i < 128; i++)
-            {
-                if (rec.rgbButtons[i] == 128)
-                {
-                }
-
-            }
 
             /* THIS AXIS ARE NEVER REPORTED BY LOGITECH CONTROLLERS 
              * 
@@ -215,16 +203,6 @@ public class LogitechSteeringWheel : MonoBehaviour
             //Set preferred controller properties -> PageUp
             if (Input.GetKeyUp(KeyCode.PageUp))
             {
-                //Setting example values
-                properties.wheelRange = 90;
-                properties.forceEnable = true;
-                properties.overallGain = 80;
-                properties.springGain = 80;
-                properties.damperGain = 80;
-                properties.allowGameSettings = true;
-                properties.combinePedals = false;
-                properties.defaultSpringEnabled = true;
-                properties.defaultSpringGain = 80;
                 LogitechGSDK.LogiSetPreferredControllerProperties(properties);
 
             }
@@ -233,10 +211,6 @@ public class LogitechSteeringWheel : MonoBehaviour
             if (Input.GetKeyUp(KeyCode.P))
             {
                 LogitechGSDK.LogiPlayLeds(0, 20, 20, 20);
-            }
-
-            for (int i = 0; i < 9; i++)
-            {
             }
 
         }
