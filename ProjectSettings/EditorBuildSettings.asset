@@ -14,4 +14,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/School_NotComplete.unity
     guid: e9d30720d38d01848aec0e681a4ee2b2
-  m_configObjects: {}
+  m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 05c95e23d088a0e40b7903084677d2f7, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: b5e288690d1608c43b269ce37fc108d0, type: 2}

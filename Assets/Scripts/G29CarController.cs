@@ -148,6 +148,7 @@ public class G29CarController : MonoBehaviour
         Lights();
         if (Input.GetKey(KeyCode.Space))
         {
+            print("스페이스");
             if (person) person = false;
             else person = true;
         }
@@ -262,7 +263,6 @@ public class G29CarController : MonoBehaviour
         turnLightLeft.SetActive(left);
         LightBreak.SetActive(isBreak);
         LightHead.SetActive(Head);
-        LightNight.SetActive(Night);
-        
+        LightNight.SetActive(Night);   
     }
 }
