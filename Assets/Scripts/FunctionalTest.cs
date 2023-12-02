@@ -17,21 +17,21 @@ public class FunctionTest : MonoBehaviour
 
     void Update()
     {
-        if (controller.left)
-        {
-            print("좌측 방향지시등");
-        }
-        if (controller.right)
-        {
-            print("우측 방향지시등");
-        }
-        if (controller.Night)
-        {
-            print("라이트");
-        }
-        if (controller.Head)
-        {
-            print("상향등");
-        }
+        //if (controller.left)
+        //{
+        //    print("좌측 방향지시등");
+        //}
+        //if (controller.right)
+        //{
+        //    print("우측 방향지시등");
+        //}
+        //if (controller.Night)
+        //{
+        //    print("라이트");
+        //}
+        //if (controller.Head)
+        //{
+        //    print("상향등");
+        //}
     }
 }

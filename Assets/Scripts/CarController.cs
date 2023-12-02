@@ -9,7 +9,7 @@ public class CarController : MonoBehaviour
     private WheelCollider[] wheelColliders;
     private GameObject[] wheels;
     private Rigidbody rb;
-
+    
     public float power;
     public float breakPower;
     private float wheelBase; //앞 뒤 바퀴 사이의 거리(m단위)
@@ -33,7 +33,7 @@ public class CarController : MonoBehaviour
             // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
             wheelColliders[i].motorTorque = Input.GetAxis("Vertical") * power;
 
-
+           
 
         }
 
@@ -84,7 +84,7 @@ public class CarController : MonoBehaviour
     void SteerVehicle()
     {
         //steerAngle = 바퀴의 조향 각도
-
+        
         //공식 Rad2Deg * Atan(wheelBase in meter / (turnRadius in meters + (rearTrack in meters / 2to get center)) * steerInput  left
         // Rad2Deg* Atan(wheelBase in meter / (turnRadius in meters - (rearTrack in meters / 2to get center)) *steerInput  right
 
@@ -138,5 +138,5 @@ public class CarController : MonoBehaviour
         rearTrack = wheelColliders[2].transform.position.x - wheelColliders[3].transform.position.x;
     }
 
-
+  
 }
